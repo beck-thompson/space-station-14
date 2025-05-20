@@ -10,6 +10,9 @@
     {
       "name": "full"
     },
+  {
+      "name": "bullethole"
+  },
     {
       "name": "solid0",
       "directions": 4

@@ -65,7 +65,7 @@ public sealed class FireVisualizerSystem : VisualizerSystem<FireVisualsComponent
             return;
 
         AppearanceSystem.TryGetData<bool>(uid, FireVisuals.OnFire, out var onFire, appearance);
-        AppearanceSystem.TryGetData<float>(uid, FireVisuals.FireStacks, out var fireStacks, appearance);
+        AppearanceSystem.TryGetData<float>(uid,  FireVisuals.FireStacks, out var fireStacks, appearance);
         _sprite.LayerSetVisible((uid, sprite), index, onFire);
 
         if (!onFire)

@@ -1,12 +1,16 @@
+using System.Numerics;
 using Content.Server.Administration.Logs;
 using Content.Server.Destructible;
 using Content.Server.Effects;
 using Content.Server.Weapons.Ranged.Systems;
+using Content.Shared.BulletHole;
 using Content.Shared.Camera;
 using Content.Shared.Damage;
 using Content.Shared.Database;
 using Content.Shared.FixedPoint;
 using Content.Shared.Projectiles;
+using Robust.Server.GameObjects;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Player;
 
@@ -20,6 +24,8 @@ public sealed class ProjectileSystem : SharedProjectileSystem
     [Dependency] private readonly DestructibleSystem _destructibleSystem = default!;
     [Dependency] private readonly GunSystem _guns = default!;
     [Dependency] private readonly SharedCameraRecoilSystem _sharedCameraRecoil = default!;
+    [Dependency] private readonly PhysicsSystem _physics = default!;
+    [Dependency] private readonly AppearanceSystem _appearance = default!;
 
     public override void Initialize()
     {
@@ -33,6 +39,19 @@ public sealed class ProjectileSystem : SharedProjectileSystem
         if (args.OurFixtureId != ProjectileFixture || !args.OtherFixture.Hard
             || component.ProjectileSpent || component is { Weapon: null, OnlyCollideWhenShot: true })
             return;
+
+        if(!TryComp<PhysicsComponent>(uid, out var physicsComp))
+            return;
+
+        // var velocity = _physics.GetMapVelocities(uid);
+        var deltapos = Transform(uid).Coordinates.Position - Transform(args.OtherEntity).Coordinates.Position;
+
+        var velocity = physicsComp.LinearVelocity;
+        var vel2 = Vector2.Transform(velocity, Transform(args.OtherEntity).LocalMatrix).Normalized();
+        // vel2 = Vector2.Transform(vel2, Transform(args.OtherEntity).LocalMatrix).Normalized();
+
+        // Use transform position cords.
+        _appearance.SetData(args.OtherEntity, BulletHoleVisuals.BulletHole, (deltapos, vel2));
 
         var target = args.OtherEntity;
         // it's here so this check is only done once before possible hit

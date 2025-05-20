@@ -979,7 +979,12 @@
   components:
   - type: Sprite
     sprite: Structures/Walls/solid.rsi
+#    layers:
+#    - map: [ "bulletmap" ]
   - type: WallReplacementMarker
+#  - type: BulletHoleq1
+  - type: BulletHoleVisuals
+  - type: Appearance
   - type: Construction
     graph: Girder
     node: wall
