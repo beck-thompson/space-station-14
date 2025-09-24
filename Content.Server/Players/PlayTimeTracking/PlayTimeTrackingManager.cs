@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Database;
+using Content.Server.PlaytimeShare;
 using Content.Shared.CCVar;
 using Content.Shared.Players.PlayTimeTracking;
 using Robust.Shared.Asynchronous;
@@ -63,6 +65,7 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     [Dependency] private readonly ITaskManager _task = default!;
     [Dependency] private readonly IRuntimeLog _runtimeLog = default!;
     [Dependency] private readonly UserDbDataManager _userDb = default!;
+    [Dependency] private readonly PlaytimeShareManager _share = default!;
 
     private ISawmill _sawmill = default!;
 
@@ -78,6 +81,7 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     private readonly List<Task> _pendingSaveTasks = new();
 
     private readonly Dictionary<ICommonSession, PlayTimeData> _playTimeData = new();
+    private readonly Dictionary<ICommonSession, Dictionary<string, TimeSpan>> _timeTransferData = new();
 
     public event CalcPlayTimeTrackersCallback? CalcTrackers;
 
@@ -312,6 +316,7 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     {
         var data = new PlayTimeData();
         _playTimeData.Add(session, data);
+        var timeTransferData = new Dictionary<string, TimeSpan>();
 
         var playTimes = await _db.GetPlayTimes(session.UserId, cancel);
         cancel.ThrowIfCancellationRequested();
@@ -320,6 +325,16 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         {
             data.TrackerTimes.Add(timer.Tracker, timer.TimeSpent);
         }
+
+        var timeTransferTimes = await _share.GetTimeTransfers(session.UserId);
+
+        foreach (var transfer in timeTransferTimes)
+        {
+            var combined = UseHightestTime(transfer.Format.PlaytimeTrackers, timeTransferData);
+            timeTransferData = combined;
+        }
+
+        _timeTransferData.Add(session, timeTransferData);
 
         data.Initialized = true;
 
@@ -332,6 +347,7 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         SaveSession(session);
 
         _playTimeData.Remove(session);
+        _timeTransferData.Remove(session);
     }
 
     public void AddTimeToTracker(ICommonSession id, string tracker, TimeSpan time)
@@ -354,12 +370,12 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     {
         AddTimeToTracker(id, PlayTimeTrackingShared.TrackerOverall, time);
     }
-
+//todo fix
     public TimeSpan GetOverallPlaytime(ICommonSession id)
     {
         return GetPlayTimeForTracker(id, PlayTimeTrackingShared.TrackerOverall);
     }
-
+// todo fix this as well
     public bool TryGetTrackerTimes(ICommonSession id, [NotNullWhen(true)] out Dictionary<string, TimeSpan>? time)
     {
         time = null;
@@ -372,7 +388,7 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         time = data.TrackerTimes;
         return true;
     }
-
+    // todo: fix this as well
     public bool TryGetTrackerTime(ICommonSession id, string tracker, [NotNullWhen(true)] out TimeSpan? time)
     {
         time = null;
@@ -391,7 +407,10 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         if (!_playTimeData.TryGetValue(id, out var data) || !data.Initialized)
             throw new InvalidOperationException("Play time info is not yet loaded for this player!");
 
-        return data.TrackerTimes;
+        if (!_timeTransferData.TryGetValue(id, out var timeTransferData))
+            throw new InvalidOperationException("Time transfer data not init");
+
+        return CombineTimes(data.TrackerTimes, timeTransferData);
     }
 
     public TimeSpan GetPlayTimeForTracker(ICommonSession id, string tracker)
@@ -399,7 +418,13 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         if (!_playTimeData.TryGetValue(id, out var data) || !data.Initialized)
             throw new InvalidOperationException("Play time info is not yet loaded for this player!");
 
-        return data.TrackerTimes.GetValueOrDefault(tracker);
+        if (!_timeTransferData.TryGetValue(id, out var timeTransferData))
+            throw new InvalidOperationException("Time transfer data not init");
+
+        var playtime = data.TrackerTimes.GetValueOrDefault(tracker);
+        var transferPlaytime = timeTransferData.GetValueOrDefault(tracker);
+
+        return playtime + transferPlaytime;
     }
 
     /// <summary>
@@ -467,5 +492,36 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     {
         _userDb.AddOnLoadPlayer(LoadData);
         _userDb.AddOnPlayerDisconnect(ClientDisconnected);
+    }
+
+    // go to leet code if you want an actually efficient version noob
+    private Dictionary<string, TimeSpan> UseHightestTime(Dictionary<string, TimeSpan> d1, Dictionary<string, TimeSpan> d2)
+    {
+        var result = d1.ToDictionary();
+
+        foreach (var tracker in d2)
+        {
+            if (!result.TryGetValue(tracker.Key, out var value))
+                result.Add(tracker.Key, tracker.Value);
+            else if (value < tracker.Value)
+                result[tracker.Key] = tracker.Value;
+        }
+
+        return result;
+    }
+
+    private Dictionary<string, TimeSpan> CombineTimes(Dictionary<string, TimeSpan> d1, Dictionary<string, TimeSpan> d2)
+    {
+        var result = d1.ToDictionary();
+
+        foreach (var tracker in d2)
+        {
+            if (result.TryGetValue(tracker.Key, out var value))
+                result[tracker.Key] = tracker.Value + value;
+            else
+                result.Add(tracker.Key, tracker.Value);
+        }
+
+        return result;
     }
 }

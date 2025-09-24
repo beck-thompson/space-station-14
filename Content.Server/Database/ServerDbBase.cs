@@ -13,6 +13,7 @@ using Content.Shared.Construction.Prototypes;
 using Content.Shared.Database;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
+using Content.Shared.PlaytimeShare;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
@@ -1820,6 +1821,87 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
         }
 
         #endregion
+
+        #region TimeTransferse
+
+        public async Task<int> AddTimeTransfer(PlaytimeShareFormatSigned timeTransfer, string rawPlaytimeShareFormat, string note)
+        {
+            await using var db = await GetDb();
+
+            var entry = new TimeTransfers
+            {
+                Raw = rawPlaytimeShareFormat,
+                PlayerId = timeTransfer.Format.PlayerUid,
+                Version = timeTransfer.Version,
+                Signature = timeTransfer.Signature,
+                Date = DateTime.UtcNow,
+                Approved = false,
+                Note = note,
+            };
+            db.DbContext.TimeTransfers.Add(entry);
+            await db.DbContext.SaveChangesAsync();
+
+            return entry.Id;
+        }
+
+        public async Task<List<TimeTransfers>> GetTimeTransfers(NetUserId player)
+        {
+            await using var db = await GetDb();
+
+            return await db.DbContext.TimeTransfers
+                .Where(x => x.PlayerId == player)
+                .ToListAsync();
+        }
+
+        // TODO add check for dupes
+        public async Task<string> AddTimeTransferServerInfo(TimeTransferServerInfo info)
+        {
+            await using var db = await GetDb();
+
+            db.DbContext.TimeTransferServerInfo.Add(info);
+            await db.DbContext.SaveChangesAsync();
+
+            return info.ServerPublicKey;
+        }
+
+        // Ensure it exists?
+        public async Task EditTimeTransferServerInfo(TimeTransferServerInfo newInfo)
+        {
+            await using var db = await GetDb();
+
+            var oldInfo = await db.DbContext.TimeTransferServerInfo.SingleOrDefaultAsync(x => x.ServerPublicKey == newInfo.ServerPublicKey);
+            if (oldInfo is null)
+                return;
+
+            oldInfo.ServerName = newInfo.ServerName;
+            oldInfo.Enabled = newInfo.Enabled;
+            oldInfo.AutoApproveTransfers =  newInfo.AutoApproveTransfers;
+            oldInfo.ApplicationMaxAge = newInfo.ApplicationMaxAge;
+            oldInfo.RoleTransferData = newInfo.RoleTransferData;
+            oldInfo.Note = newInfo.Note;
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteTimeTransferServerInfo(string key)
+        {
+            await using var db = await GetDb();
+
+            await db.DbContext.TimeTransferServerInfo
+                .Where(x => x.ServerPublicKey == key)
+                .ExecuteDeleteAsync();
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<TimeTransferServerInfo>> GetAllTimeTransferServerInfo()
+        {
+            await using var db = await GetDb();
+
+            return await db.DbContext.TimeTransferServerInfo.ToListAsync();
+        }
+
+        #endregion // Time transfers
 
         public abstract Task SendNotification(DatabaseNotification notification);
 

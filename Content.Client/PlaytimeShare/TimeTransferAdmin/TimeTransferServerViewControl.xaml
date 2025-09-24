@@ -1,0 +1,57 @@
+<Control xmlns="https://spacestation14.io"
+         xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+         xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls">
+    <BoxContainer Margin="10 10 10 10" Orientation="Horizontal">
+        <!-- Server listings -->
+        <ScrollContainer VerticalExpand="True" HorizontalExpand="True" Margin="0 0 10 0">
+            <BoxContainer Name="ServerListingContainer" HorizontalExpand="True" Orientation="Vertical" Margin="0 0 10 0">
+            </BoxContainer>
+        </ScrollContainer>
+        <!-- Edit panel -->
+        <ScrollContainer VerticalExpand="True" HorizontalExpand="True" Margin="0 0 10 0">
+            <PanelContainer Margin="5" HorizontalExpand="True" HorizontalAlignment="Stretch">
+                <PanelContainer.PanelOverride>
+                    <graphics:StyleBoxFlat BackgroundColor="#373742" />
+                </PanelContainer.PanelOverride>
+                <BoxContainer SetWidth="350" Orientation="Vertical">
+
+                    <BoxContainer Align="Center" Margin="10">
+                        <RichTextLabel Text="[bold]Edit / add panel[/bold]" />
+                    </BoxContainer>
+
+                    <LineEdit PlaceHolder="Servers name" />
+                    <Label Text="Public key:" Margin="0 10 0 0" />
+                    <PanelContainer StyleClasses="windowPanel" >
+                        <TextEdit HorizontalExpand="True" MinHeight="150" />
+                    </PanelContainer>
+                    <Button Text="Upload public key" />
+
+                    <CheckBox Text="Automatic approval" Margin="0 10 0 0"/>
+                    <CheckBox Text="Enabled" />
+
+                    <BoxContainer HorizontalExpand="True" Margin="0 10 0 0">
+                        <Label Text="Oldest request (hours): " />
+                        <LineEdit PlaceHolder="In hours" Text="48" HorizontalExpand="True" />
+                    </BoxContainer>
+
+                    <Label Text="Transfer sheet:" Margin="0 10 0 0" />
+                    <PanelContainer StyleClasses="windowPanel">
+                        <TextEdit HorizontalExpand="True" MinHeight="150"></TextEdit>
+                    </PanelContainer>
+                    <Button Text="Create sheet" />
+
+                    <Label Text="Notes:" Margin="0 10 0 0" />
+                    <PanelContainer StyleClasses="windowPanel">
+                        <TextEdit HorizontalExpand="True" MinHeight="150"></TextEdit>
+                    </PanelContainer>
+
+                    <BoxContainer Align="Center" Margin="0 10 0 10" >
+                        <Button Text="Submit" />
+                    </BoxContainer>
+                    <RichTextLabel Text="[color=red]There was an error!!![/color]" />
+
+                </BoxContainer>
+            </PanelContainer>
+        </ScrollContainer>
+    </BoxContainer>
+</Control>

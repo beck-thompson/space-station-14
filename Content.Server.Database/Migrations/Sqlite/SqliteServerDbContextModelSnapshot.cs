@@ -1276,6 +1276,90 @@ namespace Content.Server.Database.Migrations.Sqlite
                     b.ToTable("server_unban", (string)null);
                 });
 
+            modelBuilder.Entity("Content.Server.Database.TimeTransferServerInfo", b =>
+                {
+                    b.Property<string>("ServerPublicKey")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("server_public_key");
+
+                    b.Property<TimeSpan>("ApplicationMaxAge")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("application_max_age");
+
+                    b.Property<bool>("AutoApproveTransfers")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("auto_approve_transfers");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("enabled");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("note");
+
+                    b.Property<string>("RoleTransferData")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("role_transfer_data");
+
+                    b.Property<string>("ServerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("server_name");
+
+                    b.HasKey("ServerPublicKey")
+                        .HasName("PK_time_transfer_server_info");
+
+                    b.ToTable("time_transfer_server_info", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.TimeTransfers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("time_transfers_id");
+
+                    b.Property<bool>("Approved")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("approved");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("note");
+
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("player_id");
+
+                    b.Property<string>("Raw")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("raw");
+
+                    b.Property<string>("Signature")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("signature");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id")
+                        .HasName("PK_time_transfers");
+
+                    b.ToTable("time_transfers", (string)null);
+                });
+
             modelBuilder.Entity("Content.Server.Database.Trait", b =>
                 {
                     b.Property<int>("Id")

@@ -1,0 +1,17 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+             xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+             Title="Time transfer window"
+             MinSize="300 250"
+             SetSize="550 500">
+    <BoxContainer Orientation="Vertical" Margin="10 0 20 0">
+        <BoxContainer Orientation="Vertical" Name="FeedbackReplyContainer">
+            <Button Name="GetPlaytime" Text="Get playtime" Access="Public" />
+            <Button Name="SubmitPlaytime" Text="Submit playtime" Access="Public" />
+            <Button Name="GetPublicKey" Text="Get servers public key" Access="Public" />
+            <Button Name="CopyKey" Text="copy key" Access="Public" />
+        </BoxContainer>
+        <BoxContainer>
+            <Label Name="Output" Access="Public" />
+        </BoxContainer>
+    </BoxContainer>
+</controls:FancyWindow>

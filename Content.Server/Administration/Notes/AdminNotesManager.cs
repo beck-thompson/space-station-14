@@ -142,26 +142,28 @@ public sealed class AdminNotesManager : IAdminNotesManager, IPostInjectInit
                 throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown note type");
         }
 
-        var note = new SharedAdminNote(
-            noteId,
-            (NetUserId) player,
-            roundId,
-            serverName,
-            playtime,
-            type,
-            message,
-            severity,
-            secret,
-            createdBy.Name,
-            createdBy.Name,
-            createdAt,
-            createdAt,
-            expiryTime,
-            null,
-            null,
-            null,
-            seen
-        );
+        var note = new SharedAdminNote
+        {
+            Id = noteId,
+            Player = (NetUserId) player,
+            Round = roundId,
+            ServerName = serverName,
+            PlaytimeAtNote = playtime,
+            NoteType = type,
+            Message = message,
+            NoteSeverity = severity,
+            Secret = secret,
+            CreatedByName = createdBy.Name,
+            EditedByName = createdBy.Name,
+            CreatedAt = createdAt,
+            LastEditedAt = createdAt,
+            ExpiryTime = expiryTime,
+            BannedRoles = null,
+            UnbannedTime = null,
+            UnbannedByName = null,
+            Seen = seen,
+        };
+
         NoteAdded?.Invoke(note);
     }
 
@@ -294,15 +296,24 @@ public sealed class AdminNotesManager : IAdminNotesManager, IPostInjectInit
                 throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown note type");
         }
 
-        var newNote = note with
-        {
-            Message = message,
-            NoteSeverity = severity,
-            Secret = secret,
-            LastEditedAt = editedAt,
-            EditedByName = editedBy.Name,
-            ExpiryTime = expiryTime
-        };
+        var newNote = new SharedAdminNote();
+        newNote.Message = message;
+        if (severity != null)
+            newNote.NoteSeverity = severity.Value;
+        newNote.Secret = secret;
+        newNote.LastEditedAt = editedAt;
+        newNote.EditedByName  = editedBy.Name;
+        newNote.ExpiryTime = expiryTime;
+
+        // var newNote = note with
+        // {
+        //     Message = message,
+        //     NoteSeverity = severity,
+        //     Secret = secret,
+        //     LastEditedAt = editedAt,
+        //     EditedByName = editedBy.Name,
+        //     ExpiryTime = expiryTime
+        // };
         NoteModified?.Invoke(newNote);
     }
 

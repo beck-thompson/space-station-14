@@ -20,6 +20,7 @@ using Content.Server.Players;
 using Content.Server.Players.JobWhitelist;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Server.Players.RateLimiting;
+using Content.Server.PlaytimeShare;
 using Content.Server.Preferences.Managers;
 using Content.Server.ServerInfo;
 using Content.Server.ServerUpdates;
@@ -111,6 +112,8 @@ namespace Content.Server.Entry
                 IoCManager.Resolve<GhostKickManager>().Initialize();
                 IoCManager.Resolve<ServerInfoManager>().Initialize();
                 IoCManager.Resolve<ServerApi>().Initialize();
+
+                IoCManager.Resolve<PlaytimeShareManager>().Initialize();
 
                 _voteManager.Initialize();
                 _updateManager.Initialize();

@@ -8,7 +8,8 @@
     xmlns:style="clr-namespace:Content.Client.Stylesheets"
     xmlns:lobbyUi="clr-namespace:Content.Client.Lobby.UI"
     xmlns:info="clr-namespace:Content.Client.Info"
-    xmlns:widgets="clr-namespace:Content.Client.UserInterface.Systems.Chat.Widgets">
+    xmlns:widgets="clr-namespace:Content.Client.UserInterface.Systems.Chat.Widgets"
+    xmlns:timetransfer="clr-namespace:Content.Client.PlaytimeShare">
     <!-- Background -->
     <TextureRect Access="Public" VerticalExpand="True" HorizontalExpand="True" Name="Background"
                  Stretch="KeepAspectCovered" />
@@ -79,6 +80,7 @@
                     <BoxContainer Orientation="Horizontal" MinSize="0 40" HorizontalAlignment="Right">
                         <Button Name="AHelpButton" Access="Public" Text="{Loc 'ui-lobby-ahelp-button'}"
                                 StyleClasses="ButtonBig" />
+                        <timetransfer:TimeTransferButton Text="Time Transfer" StyleClasses="ButtonBig"   />
                         <vote:VoteCallMenuButton Name="CallVoteButton" StyleClasses="ButtonBig" />
                         <Button Name="OptionsButton" Access="Public" StyleClasses="ButtonBig"
                                 Text="{Loc 'ui-lobby-options-button'}" />
@@ -111,7 +113,7 @@
             </PanelContainer>
         </SplitContainer>
         <PanelContainer Name="ExpandPanel"
-                        StyleClasses="AngleRect" 
+                        StyleClasses="AngleRect"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Margin="0 2 2 0"

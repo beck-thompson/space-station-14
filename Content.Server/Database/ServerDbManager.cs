@@ -9,6 +9,7 @@ using Content.Shared.Administration.Logs;
 using Content.Shared.CCVar;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Database;
+using Content.Shared.PlaytimeShare;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Microsoft.Data.Sqlite;
@@ -342,6 +343,18 @@ namespace Content.Server.Database
         Task<bool> CleanIPIntelCache(TimeSpan range);
 
         #endregion
+
+        #region TimeTransfer
+
+        Task<int> AddTimeTransfer(PlaytimeShareFormatSigned timeTransfer, string rawPlaytimeShareFormat, string note);
+
+        Task<List<TimeTransfers>> GetTimeTransfers(NetUserId player);
+
+        Task<string> AddTimeTransferServerInfo(TimeTransferServerInfo info);
+
+        Task<List<TimeTransferServerInfo>> GetAllTimeTransferServerInfo();
+
+        #endregion // Time transfer
 
         #region DB Notifications
 
@@ -1050,6 +1063,42 @@ namespace Content.Server.Database
         {
             DbWriteOpsMetric.Inc();
             return RunDbCommand(() => _db.CleanIPIntelCache(range));
+        }
+
+        public Task<int> AddTimeTransfer(PlaytimeShareFormatSigned timeTransfer, string rawPlaytimeShareFormat, string note)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.AddTimeTransfer(timeTransfer, rawPlaytimeShareFormat, note));
+        }
+
+        public Task<List<TimeTransfers>> GetTimeTransfers(NetUserId player)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.GetTimeTransfers(player));
+        }
+
+        public Task<string> AddTimeTransferServerInfo(TimeTransferServerInfo info)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.AddTimeTransferServerInfo(info));
+        }
+
+        public Task EditTimeTransferServerInfo(TimeTransferServerInfo newInfo)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.EditTimeTransferServerInfo(newInfo));
+        }
+
+        public Task DeleteTimeTransferServerInfo(string key)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.DeleteTimeTransferServerInfo(key));
+        }
+
+        public Task<List<TimeTransferServerInfo>> GetAllTimeTransferServerInfo()
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.GetAllTimeTransferServerInfo());
         }
 
         public void SubscribeToNotifications(Action<DatabaseNotification> handler)

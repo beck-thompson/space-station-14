@@ -18,6 +18,7 @@ using Content.Server.NodeContainer.NodeGroups;
 using Content.Server.Players.JobWhitelist;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Server.Players.RateLimiting;
+using Content.Server.PlaytimeShare;
 using Content.Server.Preferences.Managers;
 using Content.Server.ServerInfo;
 using Content.Server.ServerUpdates;
@@ -76,6 +77,7 @@ namespace Content.Server.IoC
             IoCManager.Register<ConnectionManager>();
             IoCManager.Register<MultiServerKickManager>();
             IoCManager.Register<CVarControlManager>();
+            IoCManager.Register<PlaytimeShareManager>();
 
             IoCManager.Register<DiscordLink>();
             IoCManager.Register<DiscordChatLink>();

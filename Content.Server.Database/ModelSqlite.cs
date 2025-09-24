@@ -82,6 +82,10 @@ namespace Content.Server.Database
                 .Property(log => log.Markings)
                 .HasConversion(jsonByteArrayConverter);
 
+            modelBuilder.Entity<TimeTransferServerInfo>()
+                .Property(transfer => transfer.RoleTransferData)
+                .HasConversion(jsonStringConverter);
+
             // EF core can make this automatically unique on sqlite but not psql.
             modelBuilder.Entity<IPIntelCache>()
                 .HasIndex(p => p.Address)

@@ -1,0 +1,10 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                      Title="{Loc 'time-transfer-admin-control-title'}"
+                      MinSize="300 250"
+                      SetSize="900 880">
+    <BoxContainer Orientation="Vertical" Margin="10 0 10 10">
+        <!-- Holds all the controls in the tab container. -->
+        <TabContainer Name="MasterTabContainer" VerticalExpand="True" HorizontalExpand="True" Margin="0 10 0 0" Access="Public" />
+    </BoxContainer>
+</controls:FancyWindow>

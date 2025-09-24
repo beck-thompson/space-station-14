@@ -1,0 +1,33 @@
+<Control xmlns="https://spacestation14.io"
+         xmlns:helpers="clr-namespace:Content.Client.PlaytimeShare.Helpers">
+    <BoxContainer Margin="10 10 10 10" Orientation="Vertical">
+        <BoxContainer>
+            <Label Text="{Loc 'time-transfer-admin-control-cvar-enabled'}" Margin="0 0 5 0" />
+            <RichTextLabel Name="EnabledLabel" />
+        </BoxContainer>
+        <BoxContainer>
+            <Label Text="{Loc 'time-transfer-admin-control-cvar-incoming'}" Margin="0 0 5 0" />
+            <RichTextLabel Name="IncomingLabel" />
+        </BoxContainer>
+        <BoxContainer>
+            <Label Text="{Loc 'time-transfer-admin-control-cvar-outgoing'}" Margin="0 0 5 0" />
+            <RichTextLabel Name="OutgoingLabel" />
+        </BoxContainer>
+        <BoxContainer>
+            <Label Text="{Loc 'time-transfer-admin-control-cvar-unverified'}" Margin="0 0 5 0" />
+            <RichTextLabel Name="UnverifiedLabel" />
+        </BoxContainer>
+        <BoxContainer>
+            <Label Text="{Loc 'time-transfer-admin-control-cvar-private-key'}" Margin="0 0 5 0" />
+            <RichTextLabel Name="PrivateKeyStatusLabel" Access="Public" />
+        </BoxContainer>
+
+        <helpers:DownloadFileButton Name="PublicKeyButton" Text="Download this servers public key" Margin="0 20 0 0" />
+        <Button Text="Generate private key" Disabled="True" />
+
+        <BoxContainer Margin="0 20 0 0" Orientation="Vertical" Name="SetupInstructions" Visible="False" Access="Public" >
+            <RichTextLabel Text="Your server does not have a private key. Click here for setup instructions!" />
+            <Button Text="Setup" />
+        </BoxContainer>
+    </BoxContainer>
+</Control>

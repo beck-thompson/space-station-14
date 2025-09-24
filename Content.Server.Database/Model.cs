@@ -46,6 +46,8 @@ namespace Content.Server.Database
         public DbSet<RoleWhitelist> RoleWhitelists { get; set; } = null!;
         public DbSet<BanTemplate> BanTemplate { get; set; } = null!;
         public DbSet<IPIntelCache> IPIntelCache { get; set; } = null!;
+        public DbSet<TimeTransfers> TimeTransfers { get; set; } = null!;
+        public DbSet<TimeTransferServerInfo> TimeTransferServerInfo { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1074,6 +1076,71 @@ namespace Content.Server.Database
         public string Path { get; set; } = string.Empty;
 
         public byte[] Data { get; set; } = default!;
+    }
+
+    [Table("time_transfers")]
+    public class TimeTransfers
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Why store the raw input? Long story but this is probably the best way of doing it:
+        /// 1.) Easy to check the signature is valid (Possible with the other methods but more difficult)
+        /// 2.) Storing notes and stuff would have to be done in JSON format but the issue with that is the client
+        /// cannot read JSON (the functions are sandboxed) so it becomes difficult. There would have to be some intermediary
+        /// layer between which just makes everything a pain (see what I had to do for the server info).
+        /// 3.) If there are ever changes to the notes format (They are not very good at the moment so this is likely)
+        /// then changing them in the DB will be easier than having to redo all the custom weird json classes and share stuff
+        /// you'd have to do if you stored it in json.
+        ///
+        /// Is this the right choice? I think so, but its kind of one of those situations where no solution is amazing
+        /// </summary>
+        [Required]
+        public string Raw { get; set; } = string.Empty;
+
+        [Required, ForeignKey("Player")]
+        public Guid PlayerId { get; set; }
+
+        [Required]
+        public string Version { get; set; } = string.Empty;
+
+        [Required]
+        public string Signature { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime Date { get; set; }
+
+        [Required]
+        public bool Approved { get; set; }
+
+        [Required]
+        public string Note { get; set; } = string.Empty;
+    }
+
+    [Table("time_transfer_server_info")]
+    public class TimeTransferServerInfo
+    {
+        [Key]
+        public string ServerPublicKey { get; set; } = string.Empty;
+
+        [Required]
+        public string ServerName { get; set; } = string.Empty;
+
+        [Required]
+        public bool Enabled { get; set; }
+
+        [Required]
+        public bool AutoApproveTransfers { get; set; }
+
+        [Required]
+        public TimeSpan ApplicationMaxAge { get; set; }
+
+        [Required, Column(TypeName = "jsonb")]
+        public JsonDocument RoleTransferData { get; set; } = default!;
+
+        [Required]
+        public string Note { get; set; } = string.Empty;
     }
 
     // Note: this interface isn't used by the game, but it *is* used by SS14.Admin.

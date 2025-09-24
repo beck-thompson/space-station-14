@@ -51,25 +51,26 @@ public static class AdminNotesExtensions
         if (note.Player is null)
             throw new ArgumentNullException(nameof(note), "Player user ID cannot be null for a note");
 
-        return new SharedAdminNote(
-            note.Id,
-            note.Player!.UserId,
-            note.Round?.Id,
-            note.Round?.Server.Name,
-            note.PlaytimeAtNote,
-            type,
-            note.Message,
-            severity,
-            secret,
-            note.CreatedBy?.LastSeenUserName ?? Loc.GetString("system-user"),
-            note.LastEditedBy?.LastSeenUserName ?? string.Empty,
-            note.CreatedAt.UtcDateTime,
-            note.LastEditedAt?.UtcDateTime,
-            note.ExpirationTime?.UtcDateTime,
-            bannedRoles,
-            unbannedTime,
-            unbannedByName,
-            seen
-        );
+        return new SharedAdminNote
+        {
+            Id = note.Id,
+            Player = note.Player!.UserId,
+            Round = note.Round?.Id,
+            ServerName = note.Round?.Server.Name,
+            PlaytimeAtNote = note.PlaytimeAtNote,
+            NoteType = type,
+            Message = note.Message,
+            NoteSeverity = severity,
+            Secret = secret,
+            CreatedByName = note.CreatedBy?.LastSeenUserName ?? Loc.GetString("system-user"),
+            EditedByName = note.LastEditedBy?.LastSeenUserName ?? string.Empty,
+            CreatedAt = note.CreatedAt.UtcDateTime,
+            LastEditedAt = note.LastEditedAt?.UtcDateTime,
+            ExpiryTime = note.ExpirationTime?.UtcDateTime,
+            BannedRoles = bannedRoles,
+            UnbannedTime = unbannedTime,
+            UnbannedByName = unbannedByName,
+            Seen = seen,
+        };
     }
 }
