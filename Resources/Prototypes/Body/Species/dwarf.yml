@@ -5,24 +5,49 @@
   name: dwarf appearance
   components:
   - type: Inventory
-    femaleDisplacements:
+    displacements:
+      glasses:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: glasses
+      hands:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: hands
+      head:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: head
       jumpsuit:
         sizeMaps:
           32:
-            sprite: Mobs/Species/Human/displacement.rsi
-            state: jumpsuit-female
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: jumpsuit
+      neck:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: neck
+      outerClothing:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Dwarf/displacement.rsi
+            state: outerclothing
   - type: InitialBody
     organs:
-      Torso: OrganHumanTorso
-      Head: OrganHumanHead
-      ArmLeft: OrganHumanArmLeft
-      ArmRight: OrganHumanArmRight
-      HandRight: OrganHumanHandRight
-      HandLeft: OrganHumanHandLeft
-      LegLeft: OrganHumanLegLeft
-      LegRight: OrganHumanLegRight
-      FootLeft: OrganHumanFootLeft
-      FootRight: OrganHumanFootRight
+      Torso: OrganDwarfTorso
+      Head: OrganDwarfHead
+      ArmLeft: OrganDwarfArmLeft
+      ArmRight: OrganDwarfArmRight
+      HandRight: OrganDwarfHandRight
+      HandLeft: OrganDwarfHandLeft
+      LegLeft: OrganDwarfLegLeft
+      LegRight: OrganDwarfLegRight
+      FootLeft: OrganDwarfFootLeft
+      FootRight: OrganDwarfFootRight
       Brain: OrganHumanBrain
       Eyes: OrganHumanEyes
       Tongue: OrganHumanTongue
@@ -35,8 +60,8 @@
       Kidneys: OrganHumanKidneys
   - type: HumanoidProfile
     species: Dwarf
-  - type: ScaleVisuals
-    scale: 1, 0.8
+#  - type: ScaleVisuals
+#    scale: 1, 0.8
 
 - type: entity
   parent:
@@ -73,6 +98,66 @@
   id: OrganDwarf
   abstract: true
   suffix: Dwarf
+
+- type: entity
+  parent: OrganDwarf
+  id: OrganDwarfExternal
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: Mobs/Species/Dwarf/parts.rsi
+  - type: VisualOrgan
+    data:
+      sprite: Mobs/Species/Dwarf/parts.rsi
+  - type: VisualOrganMarkings
+    markingData:
+      group: Human
+
+
+
+
+- type: entity
+  parent: [ OrganBaseTorsoSexed, OrganBaseTorso, OrganDwarfExternal ]
+  id: OrganDwarfTorso
+
+- type: entity
+  parent: [ OrganBaseHeadSexed, OrganBaseHead, OrganDwarfExternal ]
+  id: OrganDwarfHead
+
+- type: entity
+  parent: [ OrganBaseArmLeft, OrganDwarfExternal ]
+  id: OrganDwarfArmLeft
+
+- type: entity
+  parent: [ OrganBaseArmRight, OrganDwarfExternal ]
+  id: OrganDwarfArmRight
+
+- type: entity
+  parent: [ OrganBaseHandLeft, OrganDwarfExternal ]
+  id: OrganDwarfHandLeft
+
+- type: entity
+  parent: [ OrganBaseHandRight, OrganDwarfExternal ]
+  id: OrganDwarfHandRight
+
+- type: entity
+  parent: [ OrganBaseLegLeft, OrganDwarfExternal ]
+  id: OrganDwarfLegLeft
+
+- type: entity
+  parent: [ OrganBaseLegRight, OrganDwarfExternal ]
+  id: OrganDwarfLegRight
+
+- type: entity
+  parent: [ OrganBaseFootLeft, OrganDwarfExternal ]
+  id: OrganDwarfFootLeft
+
+- type: entity
+  parent: [ OrganBaseFootRight, OrganDwarfExternal ]
+  id: OrganDwarfFootRight
+
+
+
 
 - type: entity
   id: OrganDwarfMetabolizer
